@@ -2,6 +2,7 @@
 using Google.Apis.Auth;
 using System.Security.Authentication;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.Connections;
 
 namespace Translatron.Controllers
 {
@@ -34,7 +35,6 @@ namespace Translatron.Controllers
             var response = await _userService.LoginAsync(request.Email, request.Password);
             return  Ok(response);
         }
-
         [HttpPost("loginGoogle")]
         public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleAuthRequest request)
         {

@@ -3,15 +3,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using UrlsBackend.Business.IService.cs;
+using UrlsBackend.Business.Service.cs;
 using UrlsBackend.Data.Context;
+using UrlsBackend.Data.IRepositories;
+using UrlsBackend.Data.Repositories;
 
 
-    public static class DependencyInjection
+public static class DependencyInjection
     {
 
         public static IServiceCollection AddRepositoriesInjections(this IServiceCollection services)
         {
-            services.AddScoped<IUserRepository, UserRepository>(); 
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUrlRepository, UrlRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
         }
@@ -20,7 +25,9 @@ using UrlsBackend.Data.Context;
             //    services.AddScoped(typeof(IServicesDependency<>), typeof(ServicesDependency<>));
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddHttpClient();
+            services.AddScoped<IUrlService, UrlService>();
+
+        services.AddHttpClient();
             services.AddAutoMapper(typeof(MappingProfile).Assembly);
             return services;
         }
@@ -41,14 +48,16 @@ using UrlsBackend.Data.Context;
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = configuration["Jwt:Issuer"],
                     ValidAudience = configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
                 };
+             services.AddAuthorization();
+
                 //options.Events = new JwtBearerEvents
                 //{
                 //    OnMessageReceived = context =>
